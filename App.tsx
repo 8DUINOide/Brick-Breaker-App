@@ -50,7 +50,7 @@ interface Props {
 const fontFamily = Platform.select({ ios: "Helvetica", default: "sans-serif" });
 const fontStyle = {
   fontFamily,
-  fontSize: 16,
+  fontSize: 20,
   fontWeight: "bold" as const,
 };
 const font = matchFont(fontStyle) || null;
