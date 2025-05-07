@@ -46,13 +46,14 @@ interface Props {
   brick: BrickInterface;
 }
 
-const fontFamily = Platform.select({ ios: "Helvetica", default: "serif" });
+// Use a reliable font and handle potential null case
+const fontFamily = Platform.select({ ios: "Helvetica", default: "sans-serif" });
 const fontStyle = {
   fontFamily,
-  fontSize: 25,
-  fontWeight: "bold",
+  fontSize: 16,
+  fontWeight: "bold" as const,
 };
-const font = matchFont(fontStyle);
+const font = matchFont(fontStyle) || null;
 
 const resolution = vec(width, height);
 
@@ -61,32 +62,42 @@ const Brick = ({ idx, brick }: Props) => {
     return brick.canCollide.value ? "orange" : "transparent";
   }, [brick.canCollide]);
 
-  const textX = brick.x + (brick.width - font.measureText(COURSE_CODES[idx] || "").width) / 2;
-  const textY = brick.y + brick.height / 2 + 5;
+  const textOpacity = useDerivedValue(() => {
+    return brick.canCollide.value ? 1 : 0;
+  }, [brick.canCollide]);
+
+  // Center text inside the brick
+  const textX = brick.x.value + (brick.width - (font?.measureText(COURSE_CODES[idx] || "").width || 0)) / 2;
+  const textY = brick.y.value + brick.height / 2 + 2; // Vertically centered with slight offset
 
   return (
-    <RoundedRect
-      key={idx}
-      x={brick.x}
-      y={brick.y}
-      width={brick.width}
-      height={brick.height}
-      color={color}
-      r={8}
-    >
-      <Text
-        x={textX}
-        y={textY}
-        text={COURSE_CODES[idx] || ""}
-        font={font}
-        color="black"
-      />
-      <LinearGradient
-        start={vec(5, 300)}
-        end={vec(4, 50)}
-        colors={["red", "orange"]}
-      />
-    </RoundedRect>
+    <>
+      <RoundedRect
+        key={idx}
+        x={brick.x.value}
+        y={brick.y.value}
+        width={brick.width}
+        height={brick.height}
+        color={color}
+        r={8}
+      >
+        <LinearGradient
+          start={vec(0, 0)}
+          end={vec(0, brick.height)}
+          colors={["red", "orange"]}
+        />
+      </RoundedRect>
+      {font && (
+        <Text
+          x={textX}
+          y={textY}
+          text={COURSE_CODES[idx] || ""}
+          font={font}
+          color="white"
+          opacity={textOpacity}
+        />
+      )}
+    </>
   );
 };
 
@@ -138,7 +149,7 @@ export default function App() {
 
       return {
         type: "Brick",
-        id: 0,
+        id: idx,
         x: useSharedValue(startingX),
         y: useSharedValue(startingY),
         m: 0,
@@ -156,30 +167,26 @@ export default function App() {
     "worklet";
     rectangleObject.x.value = PADDLE_MIDDLE;
     createBouncingExample(circleObject);
-    for (const brick of bricks) {
+    bricks.forEach((brick) => {
       brick.canCollide.value = true;
-    }
+    });
     brickCount.value = 0;
   };
 
   createBouncingExample(circleObject);
 
   useFrameCallback((frameInfo) => {
-    if (!frameInfo.timeSincePreviousFrame) {
-      return;
-    }
+    const deltaTime = frameInfo.timeSincePreviousFrame
+      ? frameInfo.timeSincePreviousFrame / 1000
+      : 0.016; // Fallback to 60 FPS
+
     if (brickCount.value === TOTAL_BRICKS || brickCount.value === -1) {
-      circleObject.ax = 0.5;
-      circleObject.ay = 1;
       circleObject.vx = 0;
       circleObject.vy = 0;
       return;
     }
-    animate(
-      [circleObject, rectangleObject, ...bricks],
-      frameInfo.timeSincePreviousFrame,
-      brickCount
-    );
+
+    animate([circleObject, rectangleObject, ...bricks], deltaTime * 1000, brickCount);
   });
 
   const gesture = Gesture.Pan()
@@ -189,7 +196,7 @@ export default function App() {
       }
     })
     .onChange(({ x }) => {
-      rectangleObject.x.value = x - PADDLE_WIDTH / 2;
+      rectangleObject.x.value = Math.max(0, Math.min(x - PADDLE_WIDTH / 2, width - PADDLE_WIDTH));
     });
 
   const opacity = useDerivedValue(() => {
@@ -198,7 +205,7 @@ export default function App() {
 
   const textPosition = useDerivedValue(() => {
     const endText = brickCount.value === TOTAL_BRICKS ? "YOU WIN" : "YOU LOSE";
-    return (width - font.measureText(endText).width) / 2;
+    return font ? (width - (font.measureText(endText).width || 0)) / 2 : 0;
   }, [font]);
 
   const gameEndingText = useDerivedValue(() => {
@@ -208,14 +215,14 @@ export default function App() {
   const uniforms = useDerivedValue(() => {
     return {
       iResolution: resolution,
-      iTime: clock.value * 0.0005,
+      iTime: clock.value * 0.001,
     };
-  }, [clock, width, height]);
+  }, [clock]);
 
   const WelcomeScreen = () => (
     <View style={styles.welcomeContainer}>
       <Canvas style={{ flex: 1 }}>
-        <Rect x={0} y={0} height={height} width={width}>
+        <Rect x={0} y={0} width={width} height={height}>
           <Shader source={shader} uniforms={uniforms} />
         </Rect>
       </Canvas>
@@ -237,7 +244,7 @@ export default function App() {
       <GestureDetector gesture={gesture}>
         <View style={styles.container}>
           <Canvas style={{ flex: 1 }}>
-            <Rect x={0} y={0} height={height} width={width}>
+            <Rect x={0} y={0} width={width} height={height}>
               <Shader source={shader} uniforms={uniforms} />
             </Rect>
             <Circle
@@ -251,21 +258,33 @@ export default function App() {
               y={rectangleObject.y}
               width={rectangleObject.width}
               height={rectangleObject.height}
-              color={"white"}
+              color="white"
               r={8}
             />
             {bricks.map((brick, idx) => (
               <Brick key={idx} idx={idx} brick={brick} />
             ))}
-            <Text x={120} y={70} text={`Level: First Year`} font={font} color="white" />
-            <Text x={20} y={100} text={`Score: ${score}`} font={font} color="white" />
-            <Text x={250} y={100} text={`Semester: 1`} font={font} color="white" />
+            {font && (
+              <>
+                <Text x={120} y={70} text={`Level: First Year`} font={font} color="white" />
+                <Text x={20} y={100} text={`Score: ${score}`} font={font} color="white" />
+                <Text x={250} y={100} text={`Semester: 1`} font={font} color="white" />
+                <Text
+                  x={textPosition}
+                  y={height / 2}
+                  text={gameEndingText}
+                  font={font}
+                  color="white"
+                  opacity={opacity}
+                />
+              </>
+            )}
             <Rect
               x={0}
               y={0}
-              height={height}
               width={width}
-              color={"red"}
+              height={height}
+              color="red"
               opacity={opacity}
             >
               <LinearGradient
@@ -274,13 +293,6 @@ export default function App() {
                 colors={["#4070D3", "#EA2F86"]}
               />
             </Rect>
-            <Text
-              x={textPosition}
-              y={height / 2}
-              text={gameEndingText}
-              font={font}
-              opacity={opacity}
-            />
           </Canvas>
         </View>
       </GestureDetector>
@@ -309,10 +321,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   welcomeSubtitle: {
-    fontSize: 30, // Slightly smaller than the main title
+    fontSize: 30,
     fontWeight: "bold",
     color: "white",
-    marginBottom: 150, // Space between "COMPUTER ENGINEERING" and "Brick Breaker"
+    marginBottom: 150,
     textAlign: "center",
   },
   welcomeTitle: {
