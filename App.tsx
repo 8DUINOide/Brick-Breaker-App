@@ -82,8 +82,8 @@ const Brick = ({ idx, brick }: Props) => {
         r={8}
       >
         <LinearGradient
-          start={vec(0, 0)}
-          end={vec(0, brick.height)}
+          start={vec(5, 300)}
+          end={vec(4, 50)}
           colors={["red", "orange"]}
         />
       </RoundedRect>
