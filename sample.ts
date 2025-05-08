@@ -1,6 +1,6 @@
 import { Dimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
-import { MAX_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, RADIUS } from "./constants";
+import { MAX_SPEED, PADDLE_HEIGHT, PADDLE_WIDTH, RADIUS, LEVELS } from "./constants";
 import {
   BrickInterface,
   CircleInterface,
@@ -172,7 +172,8 @@ export const animate = (
   objects: ShapeInterface[],
   timeSincePreviousFrame: number,
   brickCount: SharedValue<number>,
-  sharedScore: SharedValue<number>
+  unitsEarnedThisLevel: SharedValue<number>,
+  currentLevel: number
 ) => {
   "worklet";
   for (const o of objects) {
@@ -202,7 +203,9 @@ export const animate = (
   for (const col of collisions) {
     if (col.o2.type === "Brick") {
       brickCount.value++;
-      sharedScore.value += 10; // Increment score by 10 for each brick hit
+      const brick = col.o2 as BrickInterface;
+      const units = LEVELS[currentLevel].courseCodes[brick.id].units || 0;
+      unitsEarnedThisLevel.value += units; // Increment units based on the brick's units
     }
     resolveCollisionWithBounce(col);
   }

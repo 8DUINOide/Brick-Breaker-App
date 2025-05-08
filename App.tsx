@@ -12,7 +12,7 @@ import {
   Path,
   Skia,
 } from "@shopify/react-native-skia";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Platform, StyleSheet, View, Text as RNText, TouchableOpacity } from "react-native";
 import {
   Gesture,
@@ -105,7 +105,7 @@ const Brick = ({ idx, brick, currentLevel }: Props) => {
   }, [brick.canCollide]);
 
   const courseCode = useDerivedValue(() => {
-    return LEVELS[currentLevel].courseCodes[idx] || "";
+    return LEVELS[currentLevel].courseCodes[idx]?.code || "";
   }, [currentLevel]);
 
   const textX = useDerivedValue(() => {
@@ -152,7 +152,9 @@ export default function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [isGameCompleted, setIsGameCompleted] = useState(false);
-  const sharedScore = useSharedValue(0);
+  const [isResetting, setIsResetting] = useState(false);
+  const unitsEarnedThisLevel = useSharedValue(0); // Units earned in the current level
+  const totalUnitsEarned = useSharedValue(0); // Cumulative units across all levels
   const brickCount = useSharedValue(0);
   const clock = useClock();
 
@@ -193,7 +195,7 @@ export default function App() {
       const row = Math.floor(idx / BRICK_ROW_LENGTH);
       const col = idx % BRICK_ROW_LENGTH;
       const startingX = margin + col * brickSpacingX - BRICK_WIDTH / 2;
-      const startingY = 120 + row * brickSpacingY;
+      const startingY = 150 + row * brickSpacingY;
 
       return {
         type: "Brick",
@@ -219,15 +221,22 @@ export default function App() {
       brick.canCollide.value = true;
     });
     brickCount.value = 0;
+    unitsEarnedThisLevel.value = 0; // Reset units for the new level
   };
 
-  const handleLevelTransition = (advanceLevel: boolean) => {
+  const handleLevelTransition = useCallback((advanceLevel: boolean) => {
+    if (isResetting) return;
+    setIsResetting(true);
     if (advanceLevel && currentLevel < LEVELS.length - 1) {
+      // Update cumulative total units before advancing
+      totalUnitsEarned.value = LEVELS[currentLevel].cumulativeTotalUnits;
       setCurrentLevel(currentLevel + 1);
     } else if (advanceLevel && currentLevel === LEVELS.length - 1) {
+      totalUnitsEarned.value = LEVELS[currentLevel].cumulativeTotalUnits;
       setIsGameCompleted(true);
     }
-  };
+    setIsResetting(false);
+  }, [currentLevel, isResetting]);
 
   const resetGame = (advanceLevel: boolean) => {
     resetGameWorklet();
@@ -247,7 +256,7 @@ export default function App() {
       return;
     }
 
-    animate([circleObject, rectangleObject, ...bricks], deltaTime * 1000, brickCount, sharedScore);
+    animate([circleObject, rectangleObject, ...bricks], deltaTime * 1000, brickCount, unitsEarnedThisLevel, currentLevel);
   });
 
   const gesture = Gesture.Pan()
@@ -284,9 +293,15 @@ export default function App() {
     return brickCount.value === TOTAL_BRICKS ? "You can now proceed to the next semester" : "DON'T GIVE UP";
   }, []);
 
-  const scoreText = useDerivedValue(() => {
-    return `Score: ${sharedScore.value}`;
-  }, [sharedScore]);
+  const unitsEarnedText = useDerivedValue(() => {
+    const unitsEarned = unitsEarnedThisLevel.value;
+    return `Units: ${unitsEarned}`;
+  }, [unitsEarnedThisLevel]);
+
+  const totalUnitsText = useDerivedValue(() => {
+    const totalUnits = totalUnitsEarned.value;
+    return `Total Units: ${totalUnits}`;
+  }, [totalUnitsEarned]);
 
   const levelText = useDerivedValue(() => {
     return `Level: ${LEVELS[currentLevel].year}`;
@@ -333,12 +348,16 @@ export default function App() {
       <View style={styles.welcomeOverlay}>
         <RNText style={styles.welcomeSubtitle}>CONGRATULATIONS!</RNText>
         <RNText style={styles.welcomeTitle}>Curriculum Completed</RNText>
+        <RNText style={styles.welcomeSubtitle}>
+          Total Units: {totalUnitsEarned.value}
+        </RNText>
         <TouchableOpacity
           style={styles.startButton}
           onPress={() => {
             setCurrentLevel(0);
             setIsGameCompleted(false);
             setIsGameStarted(true);
+            totalUnitsEarned.value = 0;
             resetGame(false);
           }}
         >
@@ -376,8 +395,9 @@ export default function App() {
             {font && largeFont && smallFont && (
               <>
                 <Text x={120} y={70} text={levelText} font={font} color="white" />
-                <Text x={20} y={100} text={scoreText} font={font} color="white" />
-                <Text x={250} y={100} text={semesterText} font={font} color="white" />
+                <Text x={20} y={100} text={unitsEarnedText} font={font} color="white" />
+                <Text x={20} y={130} text={totalUnitsText} font={font} color="white" />
+                <Text x={230} y={100} text={semesterText} font={font} color="white" />
                 <Text
                   x={textPosition}
                   y={height / 2 - 50}
