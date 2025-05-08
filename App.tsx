@@ -154,8 +154,9 @@ export default function App() {
   const [isGameCompleted, setIsGameCompleted] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showPlayMenu, setShowPlayMenu] = useState(false);
-  const unitsEarnedThisLevel = useSharedValue(0); // Units earned in the current level
-  const totalUnitsEarned = useSharedValue(0); // Cumulative units across all levels
+  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const unitsEarnedThisLevel = useSharedValue(0); // Units earned in the current level, starts at 0
+  const totalUnitsEarned = useSharedValue(0); // Cumulative units across all levels, starts at 0
   const brickCount = useSharedValue(0);
   const clock = useClock();
 
@@ -214,6 +215,13 @@ export default function App() {
       };
     });
 
+  const getUnitsForLevel = (level: number) => {
+    if (level === 0) {
+      return LEVELS[0].cumulativeTotalUnits; // For the first level, use its cumulative total
+    }
+    return LEVELS[level].cumulativeTotalUnits - LEVELS[level - 1].cumulativeTotalUnits; // Units for this level
+  };
+
   const resetGameWorklet = () => {
     "worklet";
     rectangleObject.x.value = PADDLE_MIDDLE;
@@ -222,23 +230,40 @@ export default function App() {
       brick.canCollide.value = true;
     });
     brickCount.value = 0;
-    unitsEarnedThisLevel.value = 0; // Reset units for the new level
+    unitsEarnedThisLevel.value = 0; // Reset to 0 when resetting
   };
 
   const handleLevelTransition = useCallback((advanceLevel: boolean) => {
     if (isResetting) return;
     setIsResetting(true);
     if (advanceLevel && currentLevel < LEVELS.length - 1) {
-      // Update cumulative total units before advancing
-      totalUnitsEarned.value = LEVELS[currentLevel].cumulativeTotalUnits;
+      const newCompletedLevels = [...completedLevels, currentLevel];
+      setCompletedLevels(newCompletedLevels);
+      if (!completedLevels.includes(currentLevel)) {
+        const unitsForThisLevel = getUnitsForLevel(currentLevel);
+        unitsEarnedThisLevel.value = unitsForThisLevel; // Set units earned for this level
+        totalUnitsEarned.value += unitsForThisLevel; // Add to total
+      } else {
+        unitsEarnedThisLevel.value = 0; // Reset to 0 for replayed levels
+      }
       setCurrentLevel(currentLevel + 1);
+      unitsEarnedThisLevel.value = 0; // Reset for the next level
     } else if (advanceLevel && currentLevel === LEVELS.length - 1) {
-      // Ensure the final cumulative total units is set when completing the last level
-      totalUnitsEarned.value = LEVELS[LEVELS.length - 1].cumulativeTotalUnits;
+      const newCompletedLevels = [...completedLevels, currentLevel];
+      setCompletedLevels(newCompletedLevels);
+      if (!completedLevels.includes(currentLevel)) {
+        const unitsForThisLevel = getUnitsForLevel(currentLevel);
+        unitsEarnedThisLevel.value = unitsForThisLevel; // Set units earned for this level
+        totalUnitsEarned.value += unitsForThisLevel; // Add to total
+      } else {
+        unitsEarnedThisLevel.value = 0; // Reset to 0 for replayed levels
+      }
       setIsGameCompleted(true);
+    } else {
+      unitsEarnedThisLevel.value = 0; // Reset to 0 if level not completed (e.g., back button)
     }
     setIsResetting(false);
-  }, [currentLevel, isResetting]);
+  }, [currentLevel, isResetting, completedLevels]);
 
   const resetGame = (advanceLevel: boolean) => {
     resetGameWorklet();
@@ -249,6 +274,7 @@ export default function App() {
     setCurrentLevel(level);
     setShowPlayMenu(false);
     setIsGameStarted(true);
+    unitsEarnedThisLevel.value = 0; // Reset to 0 when starting a new level
     resetGame(false);
   };
 
@@ -363,23 +389,29 @@ export default function App() {
         </TouchableOpacity>
         <RNText style={styles.welcomeTitle}>PLAY</RNText>
         <View style={styles.gridContainer}>
-          {LEVELS.map((level, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.levelButton,
-                index === currentLevel && styles.activeLevelButton,
-              ]}
-              onPress={() => startLevel(index)}
-            >
-              <RNText style={styles.levelButtonText}>
-                {index + 1}
-              </RNText>
-              <RNText style={styles.levelButtonSubText}>
-                {`Level: ${level.year} Semester: ${level.semester}`}
-              </RNText>
-            </TouchableOpacity>
-          ))}
+          {LEVELS.map((level, index) => {
+            const isUnlocked = index <= currentLevel;
+            const isCompleted = completedLevels.includes(index);
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.levelButton,
+                  isCompleted && styles.activeLevelButton,
+                  !isUnlocked && styles.lockedLevelButton,
+                ]}
+                onPress={() => isUnlocked && startLevel(index)}
+                disabled={!isUnlocked}
+              >
+                <RNText style={styles.levelButtonText}>
+                  {isUnlocked ? index + 1 : "🔒"}
+                </RNText>
+                <RNText style={styles.levelButtonSubText}>
+                  {`Level: ${level.year} Semester: ${level.semester}`}
+                </RNText>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
     </View>
@@ -396,7 +428,7 @@ export default function App() {
         <RNText style={styles.welcomeSubtitle}>CONGRATULATIONS!</RNText>
         <RNText style={styles.welcomeTitle}>Curriculum Completed</RNText>
         <RNText style={styles.welcomeSubtitle}>
-          Total Units: {LEVELS[LEVELS.length - 1].cumulativeTotalUnits}
+          Total Units: {totalUnitsEarned.value}
         </RNText>
         <TouchableOpacity
           style={styles.startButton}
@@ -405,6 +437,8 @@ export default function App() {
             setIsGameCompleted(false);
             setIsGameStarted(true);
             totalUnitsEarned.value = 0;
+            setCompletedLevels([]);
+            unitsEarnedThisLevel.value = 0;
             resetGame(false);
           }}
         >
@@ -502,7 +536,10 @@ export default function App() {
           </Canvas>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => setIsGameStarted(false)}
+            onPress={() => {
+              unitsEarnedThisLevel.value = 0; // Reset units when going back
+              setIsGameStarted(false);
+            }}
           >
             <RNText style={styles.backButtonText}>Back</RNText>
           </TouchableOpacity>
@@ -589,6 +626,10 @@ const styles = StyleSheet.create({
   },
   activeLevelButton: {
     backgroundColor: "#77FF23",
+  },
+  lockedLevelButton: {
+    backgroundColor: "#808080",
+    opacity: 0.6,
   },
   levelButtonText: {
     fontSize: 24,
