@@ -103,7 +103,7 @@ const Brick = ({ idx, brick }: Props) => {
 
 export default function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [score, setScore] = useState(0);
+  const sharedScore = useSharedValue(0);
 
   const brickCount = useSharedValue(0);
   const clock = useClock();
@@ -171,6 +171,7 @@ export default function App() {
       brick.canCollide.value = true;
     });
     brickCount.value = 0;
+    sharedScore.value = 0; // Reset score
   };
 
   createBouncingExample(circleObject);
@@ -186,7 +187,7 @@ export default function App() {
       return;
     }
 
-    animate([circleObject, rectangleObject, ...bricks], deltaTime * 1000, brickCount);
+    animate([circleObject, rectangleObject, ...bricks], deltaTime * 1000, brickCount, sharedScore);
   });
 
   const gesture = Gesture.Pan()
@@ -211,6 +212,10 @@ export default function App() {
   const gameEndingText = useDerivedValue(() => {
     return brickCount.value === TOTAL_BRICKS ? "YOU WIN" : "YOU LOSE";
   }, []);
+
+  const scoreText = useDerivedValue(() => {
+    return `Score: ${sharedScore.value}`;
+  }, [sharedScore]);
 
   const uniforms = useDerivedValue(() => {
     return {
@@ -267,7 +272,7 @@ export default function App() {
             {font && (
               <>
                 <Text x={120} y={70} text={`Level: First Year`} font={font} color="white" />
-                <Text x={20} y={100} text={`Score: ${score}`} font={font} color="white" />
+                <Text x={20} y={100} text={scoreText} font={font} color="white" />
                 <Text x={250} y={100} text={`Semester: 1`} font={font} color="white" />
                 <Text
                   x={textPosition}
