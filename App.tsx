@@ -282,7 +282,7 @@ export default function App() {
   }, [largeFont]);
 
   const subTextPosition = useDerivedValue(() => {
-    const subText = brickCount.value === TOTAL_BRICKS ? "You can now proceed to the next semester" : "DON'T GIVE UP";
+    const subText = brickCount.value === TOTAL_BRICKS ? "Keep going!" : "DON'T GIVE UP";
     return smallFont ? (width - (smallFont.measureText(subText).width || 0)) / 2 : 0;
   }, [smallFont]);
 
@@ -291,7 +291,7 @@ export default function App() {
   }, []);
 
   const gameSubText = useDerivedValue(() => {
-    return brickCount.value === TOTAL_BRICKS ? "You can now proceed to the next semester" : "DON'T GIVE UP";
+    return brickCount.value === TOTAL_BRICKS ? "Keep going!" : "DON'T GIVE UP";
   }, []);
 
   const unitsEarnedText = useDerivedValue(() => {
@@ -350,7 +350,7 @@ export default function App() {
         <RNText style={styles.welcomeSubtitle}>CONGRATULATIONS!</RNText>
         <RNText style={styles.welcomeTitle}>Curriculum Completed</RNText>
         <RNText style={styles.welcomeSubtitle}>
-          Total Units: {totalUnitsEarned.value}
+          Total Units: {LEVELS[LEVELS.length - 1].cumulativeTotalUnits}
         </RNText>
         <TouchableOpacity
           style={styles.startButton}
