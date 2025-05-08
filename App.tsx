@@ -232,7 +232,8 @@ export default function App() {
       totalUnitsEarned.value = LEVELS[currentLevel].cumulativeTotalUnits;
       setCurrentLevel(currentLevel + 1);
     } else if (advanceLevel && currentLevel === LEVELS.length - 1) {
-      totalUnitsEarned.value = LEVELS[currentLevel].cumulativeTotalUnits;
+      // Ensure the final cumulative total units is set when completing the last level
+      totalUnitsEarned.value = LEVELS[LEVELS.length - 1].cumulativeTotalUnits;
       setIsGameCompleted(true);
     }
     setIsResetting(false);
