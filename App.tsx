@@ -153,6 +153,7 @@ export default function App() {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [isGameCompleted, setIsGameCompleted] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [showPlayMenu, setShowPlayMenu] = useState(false);
   const unitsEarnedThisLevel = useSharedValue(0); // Units earned in the current level
   const totalUnitsEarned = useSharedValue(0); // Cumulative units across all levels
   const brickCount = useSharedValue(0);
@@ -244,6 +245,13 @@ export default function App() {
     runOnJS(handleLevelTransition)(advanceLevel);
   };
 
+  const startLevel = (level: number) => {
+    setCurrentLevel(level);
+    setShowPlayMenu(false);
+    setIsGameStarted(true);
+    resetGame(false);
+  };
+
   createBouncingExample(circleObject);
 
   useFrameCallback((frameInfo) => {
@@ -331,10 +339,48 @@ export default function App() {
         <RNText style={styles.welcomeTitle}>Brick Breaker</RNText>
         <TouchableOpacity
           style={styles.startButton}
-          onPress={() => setIsGameStarted(true)}
+          onPress={() => setShowPlayMenu(true)}
         >
-          <RNText style={styles.startButtonText}>Start Game</RNText>
+          <RNText style={styles.startButtonText}>Play</RNText>
         </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const PlayMenuScreen = () => (
+    <View style={styles.welcomeContainer}>
+      <Canvas style={{ flex: 1 }}>
+        <Rect x={0} y={0} width={width} height={height}>
+          <Shader source={shader} uniforms={uniforms} />
+        </Rect>
+      </Canvas>
+      <View style={styles.welcomeOverlay}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setShowPlayMenu(false)}
+        >
+          <RNText style={styles.backButtonText}>Back</RNText>
+        </TouchableOpacity>
+        <RNText style={styles.welcomeTitle}>PLAY</RNText>
+        <View style={styles.gridContainer}>
+          {LEVELS.map((level, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.levelButton,
+                index === currentLevel && styles.activeLevelButton,
+              ]}
+              onPress={() => startLevel(index)}
+            >
+              <RNText style={styles.levelButtonText}>
+                {index + 1}
+              </RNText>
+              <RNText style={styles.levelButtonSubText}>
+                {`Level: ${level.year} Semester: ${level.semester}`}
+              </RNText>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -454,12 +500,18 @@ export default function App() {
               />
             </Rect>
           </Canvas>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => setIsGameStarted(false)}
+          >
+            <RNText style={styles.backButtonText}>Back</RNText>
+          </TouchableOpacity>
         </View>
       </GestureDetector>
     </GestureHandlerRootView>
   );
 
-  return isGameCompleted ? <GameCompletedScreen /> : isGameStarted ? <GameScreen /> : <WelcomeScreen />;
+  return isGameCompleted ? <GameCompletedScreen /> : showPlayMenu ? <PlayMenuScreen /> : isGameStarted ? <GameScreen /> : <WelcomeScreen />;
 }
 
 const styles = StyleSheet.create({
@@ -500,9 +552,52 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 10,
   },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    backgroundColor: "#FF4444",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+  },
   startButtonText: {
     fontSize: 24,
     fontWeight: "bold",
     color: "black",
+  },
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  levelButton: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#D3D3D3",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 10,
+  },
+  activeLevelButton: {
+    backgroundColor: "#77FF23",
+  },
+  levelButtonText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black",
+  },
+  levelButtonSubText: {
+    fontSize: 12,
+    color: "black",
+    textAlign: "center",
   },
 });
