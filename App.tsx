@@ -9,6 +9,8 @@ import {
   Text,
   useClock,
   vec,
+  Path,
+  Skia,
 } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { Platform, StyleSheet, View, Text as RNText, TouchableOpacity } from "react-native";
@@ -72,6 +74,28 @@ const smallFontStyle = {
 const smallFont = matchFont(smallFontStyle) || null;
 
 const resolution = vec(width, height);
+
+// Function to create a five-pointed star path
+const createStarPath = (cx: number, cy: number, outerRadius: number) => {
+  const path = Skia.Path.Make(); // Use Skia factory to create Path
+  const innerRadius = outerRadius / 2; // Inner radius for star shape
+  const points = 5; // Five-pointed star
+  const angleStep = Math.PI / points; // 180° / 5 = 36° per point
+
+  for (let i = 0; i < 2 * points; i++) {
+    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+    const angle = i * angleStep - Math.PI / 2; // Start at top
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+    if (i === 0) {
+      path.moveTo(x, y);
+    } else {
+      path.lineTo(x, y);
+    }
+  }
+  path.close();
+  return path;
+};
 
 const Brick = ({ idx, brick }: Props) => {
   const color = useDerivedValue(() => {
@@ -315,16 +339,19 @@ export default function App() {
                   color="white"
                   opacity={opacity}
                 />
-                {Array(3).fill(0).map((_, index) => (
-                  <Circle
-                    key={index}
-                    cx={width / 2 - 50 + index * 50}
-                    cy={height / 2}
-                    r={20}
-                    color={brickCount.value === TOTAL_BRICKS ? "#FFD700" : "#D3D3D3"}
-                    opacity={opacity}
-                  />
-                ))}
+                {Array(3).fill(0).map((_, index) => {
+                  const cx = width / 2 - 50 + index * 50;
+                  const cy = height / 2;
+                  return (
+                    <Path
+                      key={index}
+                      path={createStarPath(cx, cy, 15)}
+                      color={brickCount.value === TOTAL_BRICKS ? "#FFD700" : "#D3D3D3"}
+                      opacity={opacity}
+                      style="fill"
+                    />
+                  );
+                })}
               </>
             )}
             <Rect
