@@ -46,7 +46,7 @@ interface Props {
   brick: BrickInterface;
 }
 
-// Use a reliable font and handle potential null case
+// Define fonts with different sizes
 const fontFamily = Platform.select({ ios: "Helvetica", default: "sans-serif" });
 const fontStyle = {
   fontFamily,
@@ -54,6 +54,22 @@ const fontStyle = {
   fontWeight: "bold" as const,
 };
 const font = matchFont(fontStyle) || null;
+
+// Larger font for "LEVEL UP" or "TRY AGAIN"
+const largeFontStyle = {
+  fontFamily,
+  fontSize: 40,
+  fontWeight: "bold" as const,
+};
+const largeFont = matchFont(largeFontStyle) || null;
+
+// Smaller font for subtext
+const smallFontStyle = {
+  fontFamily,
+  fontSize: 20,
+  fontWeight: "bold" as const,
+};
+const smallFont = matchFont(smallFontStyle) || null;
 
 const resolution = vec(width, height);
 
@@ -205,12 +221,21 @@ export default function App() {
   }, [brickCount]);
 
   const textPosition = useDerivedValue(() => {
-    const endText = brickCount.value === TOTAL_BRICKS ? "YOU WIN" : "YOU LOSE";
-    return font ? (width - (font.measureText(endText).width || 0)) / 2 : 0;
-  }, [font]);
+    const endText = brickCount.value === TOTAL_BRICKS ? "LEVEL UP" : "TRY AGAIN";
+    return largeFont ? (width - (largeFont.measureText(endText).width || 0)) / 2 : 0;
+  }, [largeFont]);
+
+  const subTextPosition = useDerivedValue(() => {
+    const subText = brickCount.value === TOTAL_BRICKS ? "You can now proceed to the next semester" : "DON'T GIVE UP";
+    return smallFont ? (width - (smallFont.measureText(subText).width || 0)) / 2 : 0;
+  }, [smallFont]);
 
   const gameEndingText = useDerivedValue(() => {
-    return brickCount.value === TOTAL_BRICKS ? "YOU WIN" : "YOU LOSE";
+    return brickCount.value === TOTAL_BRICKS ? "LEVEL UP" : "TRY AGAIN";
+  }, []);
+
+  const gameSubText = useDerivedValue(() => {
+    return brickCount.value === TOTAL_BRICKS ? "You can now proceed to the next semester" : "DON'T GIVE UP";
   }, []);
 
   const scoreText = useDerivedValue(() => {
@@ -269,19 +294,37 @@ export default function App() {
             {bricks.map((brick, idx) => (
               <Brick key={idx} idx={idx} brick={brick} />
             ))}
-            {font && (
+            {font && largeFont && smallFont && (
               <>
                 <Text x={120} y={70} text={`Level: First Year`} font={font} color="white" />
                 <Text x={20} y={100} text={scoreText} font={font} color="white" />
                 <Text x={250} y={100} text={`Semester: 1`} font={font} color="white" />
                 <Text
                   x={textPosition}
-                  y={height / 2}
+                  y={height / 2 - 50}
                   text={gameEndingText}
-                  font={font}
+                  font={largeFont}
                   color="white"
                   opacity={opacity}
                 />
+                <Text
+                  x={subTextPosition}
+                  y={height / 2 + 50}
+                  text={gameSubText}
+                  font={smallFont}
+                  color="white"
+                  opacity={opacity}
+                />
+                {Array(3).fill(0).map((_, index) => (
+                  <Circle
+                    key={index}
+                    cx={width / 2 - 50 + index * 50}
+                    cy={height / 2}
+                    r={20}
+                    color={brickCount.value === TOTAL_BRICKS ? "#FFD700" : "#D3D3D3"}
+                    opacity={opacity}
+                  />
+                ))}
               </>
             )}
             <Rect
@@ -289,12 +332,12 @@ export default function App() {
               y={0}
               width={width}
               height={height}
-              color="red"
+              color="transparent"
               opacity={opacity}
             >
               <LinearGradient
-                start={vec(0, 200)}
-                end={vec(0, 500)}
+                start={vec(0, 0)}
+                end={vec(0, height)}
                 colors={["#4070D3", "#EA2F86"]}
               />
             </Rect>
