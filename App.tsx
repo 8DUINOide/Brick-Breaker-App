@@ -340,18 +340,27 @@ export default function App() {
                   opacity={opacity}
                 />
                 {Array(3).fill(0).map((_, index) => {
-                  const cx = width / 2 - 50 + index * 50;
-                  const cy = height / 2;
-                  return (
-                    <Path
-                      key={index}
-                      path={createStarPath(cx, cy, 15)}
-                      color={brickCount.value === TOTAL_BRICKS ? "#FFD700" : "#D3D3D3"}
-                      opacity={opacity}
-                      style="fill"
-                    />
-                  );
-                })}
+  const cx = width / 2 - 50 + index * 50;
+  const cy = height / 2;
+  const starColor = useDerivedValue(() => {
+    if (brickCount.value === TOTAL_BRICKS) {
+      return "#FFFF00"; // Yellow for LEVEL UP
+    } else if (brickCount.value === -1) {
+      return "#808080"; // Grey for TRY AGAIN
+    }
+    return "transparent"; // Invisible during gameplay
+  }, [brickCount]);
+
+  return (
+    <Path
+      key={index}
+      path={createStarPath(cx, cy, 15)}
+      color={starColor}
+      opacity={opacity}
+      style="fill"
+    />
+  );
+})}
               </>
             )}
             <Rect
@@ -380,7 +389,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "white",
   },
   welcomeContainer: {
     flex: 1,
