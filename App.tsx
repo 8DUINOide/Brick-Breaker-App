@@ -361,7 +361,7 @@ export default function App() {
         </Rect>
       </Canvas>
       <View style={styles.welcomeOverlay}>
-        <RNText style={styles.welcomeSubtitle}>COMPUTER ENGINEERING</RNText>
+        <RNText style={styles.welcomeSubtitle}>COMPUTER ENGINEERING CURRICULUM</RNText>
         <RNText style={styles.welcomeTitle}>Brick Breaker</RNText>
         <TouchableOpacity
           style={styles.startButton}
