@@ -1,87 +1,59 @@
-"# Brick-Breaker-App" 
-Brick Breaker: Computer Engineering Curriculum
-
-Brick Breaker is a mobile game built with React Native, inspired by the Computer Engineering curriculum at Ateneo de Naga University. Players progress through levels representing academic semesters, breaking bricks labeled with course codes to earn units and complete the curriculum. The game combines classic Brick Breaker mechanics with an educational theme, allowing players to track their progress via a "Credited Subjects" screen.
-
-Features
 
 
+Brick Breaker: CpE Curriculum
+
+A Brick Breaker game inspired by the Computer Engineering curriculum at Ateneo de Naga University
+
+This Brick Breaker game, developed for the Mobile App Development course at Ateneo de Naga University, transforms the classic arcade game into an educational journey. Players break bricks representing Computer Engineering courses, earn academic units, and progress through semesters to "graduate" with 211 units.
 
 
-
-Curriculum-Based Levels: Each level represents a semester (First Year to Fourth Year), with bricks symbolizing courses.
-
-
-
-Unit Tracking: Earn academic units by breaking bricks, with cumulative totals displayed in-game and in the Credited Subjects screen.
-
-
-
-Interactive Gameplay: Control a paddle with touch gestures to keep a ball in play and break bricks.
-
-
-
-Multiple Screens:
+Report bug · Request feature
 
 
 
 
 
-Welcome Screen: Entry point with options to play, view instructions, or see credited subjects.
-
-
-
-How to Play Screen: Detailed guide on game mechanics and objectives.
-
-
-
-Play Menu: Select unlocked levels (semesters) to play.
-
-
-
-Credited Subjects Screen: View completed courses, their codes, titles, and units.
-
-
-
-Game Completed Screen: Celebrates finishing the curriculum with total units displayed.
-
-
-
-Visual Feedback: Stars and text overlays ("LEVEL UP" or "TRY AGAIN") indicate level success or failure.
-
-
-
-Responsive Design: Adapts to different screen sizes using dynamic dimensions.
-
-Technologies Used
+Table of Contents
 
 
 
 
 
-React Native: Cross-platform mobile app framework.
+Installation
 
 
 
-@shopify/react-native-skia: High-performance graphics rendering for game visuals.
+Status
 
 
 
-react-native-reanimated: Animation and gesture handling for smooth paddle movement and ball physics.
+What's Included
 
 
 
-react-native-gesture-handler: Touch-based paddle control.
+Bugs and Feature Requests
 
 
 
-TypeScript: Type-safe JavaScript for better code reliability.
+Contributing
 
 
 
-Expo: Simplified development and testing workflow.
+Creators
+
+
+
+Thanks
+
+
+
+Copyright and License
+
+Installation
 
 Prerequisites
+
+Ensure you have the following installed:
 
 
 
@@ -95,7 +67,7 @@ npm or yarn
 
 
 
-Expo CLI: Install globally with npm install -g expo-cli
+Expo CLI: npm install -g expo-cli
 
 
 
@@ -103,16 +75,19 @@ Git: For cloning the repository
 
 
 
-A mobile device or emulator: For testing (iOS/Android via Expo Go or a simulator)
+A mobile device or emulator: For testing via Expo Go (iOS/Android) or simulators
 
-Installation
+Steps
+
+
 
 
 
 Clone the Repository:
 
-git clone <repository-url>
-cd BrickBreakerApp
+git clone https://gitlab.com/your-repo/brick-breaker.git
+cd brick-breaker
+
 
 
 Install Dependencies:
@@ -124,16 +99,194 @@ or
 yarn install
 
 
+
 Start the Development Server:
 
 npx expo start
 
 
-Scan the QR code with the Expo Go app on your mobile device, or run on an emulator with i (iOS) or a (Android).
 
 
 
-Update App.tsx to include sound integration (see Future Improvements).
+Scan the QR code with the Expo Go app, or press i (iOS simulator) or a (Android emulator).
+
+Technology Stack
+
+
+
+
+
+React Native: Cross-platform mobile app framework
+
+
+
+@shopify/react-native-skia: High-performance graphics rendering
+
+
+
+react-native-reanimated: Smooth animations and physics
+
+
+
+react-native-gesture-handler: Touch-based paddle controls
+
+
+
+TypeScript: Type-safe development
+
+
+
+Expo: Streamlined development and testing
+
+Resources & References
+
+
+
+
+
+React Native Documentation
+
+
+
+Expo Documentation
+
+
+
+@shopify/react-native-skia
+
+
+
+react-native-reanimated
+
+Status
+
+
+
+
+
+
+
+Activity
+
+
+
+Status
+
+
+
+Date
+
+
+
+
+
+Project Setup
+
+
+
+✅ Completed
+
+
+
+March 2025
+
+
+
+
+
+UI Design
+
+
+
+✅ Completed
+
+
+
+March 2025
+
+
+
+
+
+Game Physics
+
+
+
+✅ Completed
+
+
+
+April 2025
+
+
+
+
+
+Final Testing
+
+
+
+⏳ Pending
+
+
+
+May 2025
+
+What's Included
+
+
+
+
+
+🎮 Curriculum-Based Gameplay: Break bricks labeled with course codes (e.g., CpE101) to progress through semesters (First Year to Fourth Year).
+
+
+
+📚 Unit Tracking: Earn units per course, displayed on the game screen and Credited Subjects screen, culminating in 211 units for "graduation."
+
+
+
+🖼️ Interactive UI:
+
+
+
+
+
+Welcome Screen: Start, view instructions, or check progress.
+
+
+
+How to Play Screen: Detailed gameplay guide.
+
+
+
+Play Menu: Select unlocked semesters.
+
+
+
+Credited Subjects Screen: View completed courses, codes, titles, and units.
+
+
+
+Game Completed Screen: Celebrate curriculum completion.
+
+
+
+⭐ Visual Feedback: Stars and messages ("LEVEL UP" or "TRY AGAIN") for level outcomes.
+
+
+
+📱 Responsive Design: Adapts to various screen sizes.
+
+Directory Structure
+
+src/
+├── constants.ts         # Game constants (dimensions, colors, levels)
+├── sample.ts            # Physics and animation logic
+├── shader.ts            # Background shader code
+├── types.ts             # TypeScript interfaces
+├── App.tsx              # Main app component
+README.md
 
 Gameplay Instructions
 
@@ -141,19 +294,19 @@ Gameplay Instructions
 
 
 
-Objective: Break all bricks in each level (semester) to progress through the Computer Engineering curriculum, earning units toward the 211-unit goal.
+Objective: Break all bricks (courses) in each level (semester) to earn units and complete the Computer Engineering curriculum.
 
 
 
-Controls: Swipe left or right on the screen to move the paddle, keeping the ball in play to hit bricks.
+Controls: Swipe left/right to move the paddle, keeping the ball in play to hit bricks.
 
 
 
-Levels: Each level corresponds to a semester. Complete all bricks to advance; miss the ball to retry.
+Progression: Clear all bricks to advance; miss the ball to retry.
 
 
 
-Units: Each brick represents a course with a unit value. Earn units by breaking bricks, tracked on the game screen and Credited Subjects screen.
+Units: Each brick has a unit value. Track progress on the game screen or Credited Subjects screen.
 
 
 
@@ -163,130 +316,68 @@ Navigation:
 
 
 
-Welcome Screen: Tap "Play" to select a level, "How to Play" for instructions, or "Credited Subjects" to view progress.
+Welcome Screen: Tap "Play", "How to Play", or "Credited Subjects".
 
 
 
-Play Menu: Choose an unlocked level (unlocked levels are based on progress).
+Play Menu: Choose unlocked levels.
 
 
 
-Game Screen: Play the game; tap "Back" to return to the Welcome Screen.
+Game Screen: Play and tap "Back" to exit.
 
 
 
-Credited Subjects: View completed courses and units.
+Credited Subjects: Review completed courses.
 
 
 
-Game Completed: Appears after finishing all levels, with an option to restart.
+Game Completed: Celebrate earning 211 units.
 
-For detailed instructions, refer to the "How to Play" screen in the app.
+See the in-game "How to Play" screen for details.
 
-Project Structure
+Bugs and Feature Requests
 
+Found a bug or have a feature idea? Check the issue guidelines and search existing/closed issues. If your issue is new, open a new issue.
 
+Contributing
 
+Read our contributing guidelines for details on opening issues, coding standards, and development.
 
+Code should adhere to the Code Guide. Editor preferences are in the editor config. Learn more at https://editorconfig.org/.
 
-App.tsx: Main application file containing game logic, UI components, and navigation.
+Creators
 
 
 
-sample.ts: Game physics and animation logic (ball movement, collisions, etc.).
 
 
+Developer: [Your Name] ([https://gitlab.com/your-username])
 
-constants.ts: Game constants (dimensions, colors, level data, etc.).
 
 
+Institution: Ateneo de Naga University, Computer Engineering Department
 
-types.ts: TypeScript interfaces for game objects (ball, paddle, bricks).
+Thanks
 
+Special thanks to:
 
 
-shader.ts: Shader code for background visuals.
 
 
 
-assets/sounds/: Directory for sound files (to be added manually).
+Ateneo de Naga University CpE Department for the curriculum inspiration 🎓
 
-Troubleshooting
 
 
+Mobile App Development Instructors for guidance 📚
 
 
 
-Dependencies Fail to Install:
+Open-Source Community for libraries like React Native and Skia 🚀
 
+Copyright and License
 
+Code and documentation copyright 2025 the authors. Code released under the MIT License.
 
-
-
-Clear the npm cache: npm cache clean --force
-
-
-
-Delete node_modules and package-lock.json, then run npm install again.
-
-
-
-Expo Server Not Starting:
-
-
-
-
-
-Ensure no other process is using port 19000.
-
-
-
-Run npx expo start --clear to reset the cache.
-
-
-
-Graphics Not Rendering:
-
-
-
-
-
-Verify @shopify/react-native-skia is correctly installed.
-
-
-
-Check for TypeScript errors in App.tsx related to Skia components.
-
-
-
-Future Improvements
-
-
-
-Progress Persistence: Save completed levels and total units to local storage (e.g., AsyncStorage) to retain progress across sessions.
-
-
-
-Difficulty Scaling: Increase ball speed or add obstacles as levels progress.
-
-
-
-Visual Enhancements: Add particle effects for brick destruction or animations for level transitions.
-
-
-
-Accessibility: Include a sound toggle and high-contrast mode for better accessibility.
-
-License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-Credits
-
-
-Inspired by: The Computer Engineering curriculum at Ateneo de Naga University.
-
-
-Developed by: Al Francis B. Paz
-
-Happy breaking bricks and completing your virtual degree!
+Enjoy breaking bricks and earning your virtual degree! 🎮
