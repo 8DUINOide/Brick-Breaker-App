@@ -530,6 +530,18 @@ export default function App() {
         </Rect>
       </Canvas>
       <View style={styles.welcomeOverlay}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => {
+            setIsGameCompleted(false);
+            setIsGameStarted(false);
+            setCurrentLevel(0);
+            // Do NOT reset completedLevels, totalUnitsEarned, or unitsEarnedThisLevel
+            // to preserve progress for viewing in CreditedSubjectsScreen
+          }}
+        >
+          <RNText style={styles.backButtonText}>Back</RNText>
+        </TouchableOpacity>
         <RNText style={styles.welcomeSubtitle}>CONGRATULATIONS!</RNText>
         <RNText style={styles.welcomeTitle}>Curriculum Completed</RNText>
         <RNText style={styles.welcomeSubtitle}>
@@ -739,7 +751,7 @@ const styles = StyleSheet.create({
   instructionScrollView: {
     width: "90%",
     maxHeight: height * 0.6,
-    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
     borderRadius: 10,
     padding: 15,
   },
@@ -762,7 +774,7 @@ const styles = StyleSheet.create({
   instructionNumber: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FCDF03", // Match the button color for emphasis
+    color: "#FCDF03",
   },
   scrollView: {
     width: "80%",
