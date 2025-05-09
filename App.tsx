@@ -545,7 +545,7 @@ export default function App() {
         <RNText style={styles.welcomeSubtitle}>CONGRATULATIONS!</RNText>
         <RNText style={styles.welcomeTitle}>Curriculum Completed</RNText>
         <RNText style={styles.welcomeSubtitle}>
-          Total Units: {totalUnitsEarned.value}
+          Total Units: {LEVELS[LEVELS.length - 1].cumulativeTotalUnits}
         </RNText>
         <TouchableOpacity
           style={styles.startButton}
