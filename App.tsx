@@ -154,6 +154,7 @@ export default function App() {
   const [isGameCompleted, setIsGameCompleted] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showPlayMenu, setShowPlayMenu] = useState(false);
+  const [showHowToPlay, setShowHowToPlay] = useState(false); // New state for How to Play screen
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const unitsEarnedThisLevel = useSharedValue(0); // Units earned in the current level, starts at 0
   const totalUnitsEarned = useSharedValue(0); // Cumulative units across all levels, starts at 0
@@ -369,6 +370,43 @@ export default function App() {
         >
           <RNText style={styles.startButtonText}>Play</RNText>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.howToPlayButton}
+          onPress={() => setShowHowToPlay(true)}
+        >
+          <RNText style={styles.howToPlayButtonText}>How to Play</RNText>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const HowToPlayScreen = () => (
+    <View style={styles.welcomeContainer}>
+      <Canvas style={{ flex: 1 }}>
+        <Rect x={0} y={0} width={width} height={height}>
+          <Shader source={shader} uniforms={uniforms} />
+        </Rect>
+      </Canvas>
+      <View style={styles.welcomeOverlay}>
+        <RNText style={styles.welcomeTitle}>How to Play</RNText>
+        <RNText style={styles.instructionText}>
+          1. Swipe left or right to move the paddle.
+        </RNText>
+        <RNText style={styles.instructionText}>
+          2. Bounce the ball to break all bricks.
+        </RNText>
+        <RNText style={styles.instructionText}>
+          3. Clear all bricks to advance to the next level.
+        </RNText>
+        <RNText style={styles.instructionText}>
+          4. Don’t let the ball fall below the paddle!
+        </RNText>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setShowHowToPlay(false)}
+        >
+          <RNText style={styles.backButtonText}>Back</RNText>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -548,7 +586,17 @@ export default function App() {
     </GestureHandlerRootView>
   );
 
-  return isGameCompleted ? <GameCompletedScreen /> : showPlayMenu ? <PlayMenuScreen /> : isGameStarted ? <GameScreen /> : <WelcomeScreen />;
+  return isGameCompleted ? (
+    <GameCompletedScreen />
+  ) : showHowToPlay ? (
+    <HowToPlayScreen />
+  ) : showPlayMenu ? (
+    <PlayMenuScreen />
+  ) : isGameStarted ? (
+    <GameScreen />
+  ) : (
+    <WelcomeScreen />
+  );
 }
 
 const styles = StyleSheet.create({
@@ -588,6 +636,29 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
+    marginBottom: 20, // Add spacing between buttons
+  },
+  howToPlayButton: {
+    backgroundColor: "#FFA500", // Orange color for How to Play button
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+  },
+  startButtonText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black",
+  },
+  howToPlayButtonText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black",
+  },
+  instructionText: {
+    fontSize: 20,
+    color: "white",
+    textAlign: "center",
+    marginVertical: 10,
   },
   backButton: {
     position: "absolute",
@@ -602,11 +673,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
-  },
-  startButtonText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "black",
   },
   gridContainer: {
     flexDirection: "row",
