@@ -155,7 +155,7 @@ export default function App() {
   const [isResetting, setIsResetting] = useState(false);
   const [showPlayMenu, setShowPlayMenu] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
-  const [showCreditedSubjects, setShowCreditedSubjects] = useState(false); // New state for Credited Subjects screen
+  const [showCreditedSubjects, setShowCreditedSubjects] = useState(false);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const unitsEarnedThisLevel = useSharedValue(0);
   const totalUnitsEarned = useSharedValue(0);
@@ -396,18 +396,41 @@ export default function App() {
       </Canvas>
       <View style={styles.welcomeOverlay}>
         <RNText style={styles.welcomeTitle}>How to Play</RNText>
-        <RNText style={styles.instructionText}>
-          1. Swipe left or right to move the paddle.
-        </RNText>
-        <RNText style={styles.instructionText}>
-          2. Bounce the ball to break all bricks.
-        </RNText>
-        <RNText style={styles.instructionText}>
-          3. Clear all bricks to advance to the next level.
-        </RNText>
-        <RNText style={styles.instructionText}>
-          4. Don’t let the ball fall below the paddle!
-        </RNText>
+        <ScrollView style={styles.instructionScrollView}>
+          <View style={styles.instructionContainer}>
+            <RNText style={styles.instructionHeader}>
+              Welcome to Brick Breaker, a game inspired by the Computer Engineering curriculum at Ateneo de Naga University!
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>1. Understand the Theme: </RNText>
+              Each level represents a semester in your academic journey, from First Year to Fourth Year. The bricks you break symbolize the courses you need to complete to progress through the curriculum.
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>2. Master the Mechanics: </RNText>
+              Use your finger to swipe left or right, moving the paddle at the bottom of the screen. Keep the ball bouncing to hit and break the bricks. Each brick represents a course, labeled with its course code.
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>3. Progress Through Levels: </RNText>
+              Break all the bricks in a level to advance to the next semester. Completing a level simulates passing all courses for that semester, moving you closer to graduation.
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>4. Earn Units: </RNText>
+              Each course has a unit value, reflecting its academic credits. When you clear a level, you earn the total units for that semester, which are added to your overall progress. Track your earned units on the game screen and in the Credited Subjects section.
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>5. Avoid Failure: </RNText>
+              If the ball falls below the paddle, it’s like failing a semester—you’ll need to retry the level. Stay focused to keep the ball in play and successfully complete your courses!
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>6. Track Your Progress: </RNText>
+              Visit the Credited Subjects screen to see all the courses you’ve completed, along with their course codes, titles, and units. This mirrors your transcript, showing your journey through the curriculum.
+            </RNText>
+            <RNText style={styles.instructionItem}>
+              <RNText style={styles.instructionNumber}>7. Complete the Curriculum: </RNText>
+              Finish all levels to graduate! Once you’ve cleared the final semester of Fourth Year, you’ll have completed the Computer Engineering curriculum and earned all 211 units required for your degree.
+            </RNText>
+          </View>
+        </ScrollView>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => setShowHowToPlay(false)}
@@ -685,14 +708,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   howToPlayButton: {
-    backgroundColor: "#FFA500",
+    backgroundColor: "#FCDF03",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
     marginBottom: 20,
   },
   creditedSubjectsButton: {
-    backgroundColor: "#4169E1", // Royal blue for Credited Subjects button
+    backgroundColor: "#03BEFC",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
@@ -713,11 +736,33 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "black",
   },
-  instructionText: {
-    fontSize: 20,
+  instructionScrollView: {
+    width: "90%",
+    maxHeight: height * 0.6,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent background
+    borderRadius: 10,
+    padding: 15,
+  },
+  instructionContainer: {
+    paddingBottom: 20,
+  },
+  instructionHeader: {
+    fontSize: 22,
     color: "white",
     textAlign: "center",
-    marginVertical: 10,
+    marginBottom: 20,
+  },
+  instructionItem: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "left",
+    marginVertical: 8,
+    lineHeight: 24,
+  },
+  instructionNumber: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#FCDF03", // Match the button color for emphasis
   },
   scrollView: {
     width: "80%",
