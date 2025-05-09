@@ -13,7 +13,7 @@ import {
   Skia,
 } from "@shopify/react-native-skia";
 import React, { useState, useCallback } from "react";
-import { Platform, StyleSheet, View, Text as RNText, TouchableOpacity } from "react-native";
+import { Platform, StyleSheet, View, Text as RNText, TouchableOpacity, ScrollView } from "react-native";
 import {
   Gesture,
   GestureDetector,
@@ -154,10 +154,11 @@ export default function App() {
   const [isGameCompleted, setIsGameCompleted] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showPlayMenu, setShowPlayMenu] = useState(false);
-  const [showHowToPlay, setShowHowToPlay] = useState(false); // New state for How to Play screen
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [showCreditedSubjects, setShowCreditedSubjects] = useState(false); // New state for Credited Subjects screen
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
-  const unitsEarnedThisLevel = useSharedValue(0); // Units earned in the current level, starts at 0
-  const totalUnitsEarned = useSharedValue(0); // Cumulative units across all levels, starts at 0
+  const unitsEarnedThisLevel = useSharedValue(0);
+  const totalUnitsEarned = useSharedValue(0);
   const brickCount = useSharedValue(0);
   const clock = useClock();
 
@@ -218,9 +219,9 @@ export default function App() {
 
   const getUnitsForLevel = (level: number) => {
     if (level === 0) {
-      return LEVELS[0].cumulativeTotalUnits; // For the first level, use its cumulative total
+      return LEVELS[0].cumulativeTotalUnits;
     }
-    return LEVELS[level].cumulativeTotalUnits - LEVELS[level - 1].cumulativeTotalUnits; // Units for this level
+    return LEVELS[level].cumulativeTotalUnits - LEVELS[level - 1].cumulativeTotalUnits;
   };
 
   const resetGameWorklet = () => {
@@ -231,7 +232,7 @@ export default function App() {
       brick.canCollide.value = true;
     });
     brickCount.value = 0;
-    unitsEarnedThisLevel.value = 0; // Reset to 0 when resetting
+    unitsEarnedThisLevel.value = 0;
   };
 
   const handleLevelTransition = useCallback((advanceLevel: boolean) => {
@@ -242,26 +243,26 @@ export default function App() {
       setCompletedLevels(newCompletedLevels);
       if (!completedLevels.includes(currentLevel)) {
         const unitsForThisLevel = getUnitsForLevel(currentLevel);
-        unitsEarnedThisLevel.value = unitsForThisLevel; // Set units earned for this level
-        totalUnitsEarned.value += unitsForThisLevel; // Add to total
+        unitsEarnedThisLevel.value = unitsForThisLevel;
+        totalUnitsEarned.value += unitsForThisLevel;
       } else {
-        unitsEarnedThisLevel.value = 0; // Reset to 0 for replayed levels
+        unitsEarnedThisLevel.value = 0;
       }
       setCurrentLevel(currentLevel + 1);
-      unitsEarnedThisLevel.value = 0; // Reset for the next level
+      unitsEarnedThisLevel.value = 0;
     } else if (advanceLevel && currentLevel === LEVELS.length - 1) {
       const newCompletedLevels = [...completedLevels, currentLevel];
       setCompletedLevels(newCompletedLevels);
       if (!completedLevels.includes(currentLevel)) {
         const unitsForThisLevel = getUnitsForLevel(currentLevel);
-        unitsEarnedThisLevel.value = unitsForThisLevel; // Set units earned for this level
-        totalUnitsEarned.value += unitsForThisLevel; // Add to total
+        unitsEarnedThisLevel.value = unitsForThisLevel;
+        totalUnitsEarned.value += unitsForThisLevel;
       } else {
-        unitsEarnedThisLevel.value = 0; // Reset to 0 for replayed levels
+        unitsEarnedThisLevel.value = 0;
       }
       setIsGameCompleted(true);
     } else {
-      unitsEarnedThisLevel.value = 0; // Reset to 0 if level not completed (e.g., back button)
+      unitsEarnedThisLevel.value = 0;
     }
     setIsResetting(false);
   }, [currentLevel, isResetting, completedLevels]);
@@ -275,7 +276,7 @@ export default function App() {
     setCurrentLevel(level);
     setShowPlayMenu(false);
     setIsGameStarted(true);
-    unitsEarnedThisLevel.value = 0; // Reset to 0 when starting a new level
+    unitsEarnedThisLevel.value = 0;
     resetGame(false);
   };
 
@@ -376,6 +377,12 @@ export default function App() {
         >
           <RNText style={styles.howToPlayButtonText}>How to Play</RNText>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.creditedSubjectsButton}
+          onPress={() => setShowCreditedSubjects(true)}
+        >
+          <RNText style={styles.creditedSubjectsButtonText}>Credited Subjects</RNText>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -404,6 +411,43 @@ export default function App() {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => setShowHowToPlay(false)}
+        >
+          <RNText style={styles.backButtonText}>Back</RNText>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const CreditedSubjectsScreen = () => (
+    <View style={styles.welcomeContainer}>
+      <Canvas style={{ flex: 1 }}>
+        <Rect x={0} y={0} width={width} height={height}>
+          <Shader source={shader} uniforms={uniforms} />
+        </Rect>
+      </Canvas>
+      <View style={styles.welcomeOverlay}>
+        <RNText style={styles.welcomeTitle}>Credited Subjects</RNText>
+        <ScrollView style={styles.scrollView}>
+          {completedLevels.map((levelIndex) => (
+            <View key={levelIndex}>
+              <RNText style={styles.levelHeader}>
+                {LEVELS[levelIndex].year} - {LEVELS[levelIndex].semester}
+              </RNText>
+              {LEVELS[levelIndex].courseCodes.map((course, idx) => (
+                course.code !== "       " && (
+                  <View key={idx} style={styles.subjectRow}>
+                    <RNText style={styles.subjectCode}>{course.code}</RNText>
+                    <RNText style={styles.subjectTitle}>{course.title}</RNText>
+                    <RNText style={styles.subjectUnits}>Units: {course.units}</RNText>
+                  </View>
+                )
+              ))}
+            </View>
+          ))}
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setShowCreditedSubjects(false)}
         >
           <RNText style={styles.backButtonText}>Back</RNText>
         </TouchableOpacity>
@@ -575,7 +619,7 @@ export default function App() {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
-              unitsEarnedThisLevel.value = 0; // Reset units when going back
+              unitsEarnedThisLevel.value = 0;
               setIsGameStarted(false);
             }}
           >
@@ -588,6 +632,8 @@ export default function App() {
 
   return isGameCompleted ? (
     <GameCompletedScreen />
+  ) : showCreditedSubjects ? (
+    <CreditedSubjectsScreen />
   ) : showHowToPlay ? (
     <HowToPlayScreen />
   ) : showPlayMenu ? (
@@ -636,13 +682,21 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
-    marginBottom: 20, // Add spacing between buttons
+    marginBottom: 20,
   },
   howToPlayButton: {
-    backgroundColor: "#FFA500", // Orange color for How to Play button
+    backgroundColor: "#FFA500",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
+    marginBottom: 20,
+  },
+  creditedSubjectsButton: {
+    backgroundColor: "#4169E1", // Royal blue for Credited Subjects button
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    marginBottom: 20,
   },
   startButtonText: {
     fontSize: 24,
@@ -654,11 +708,52 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "black",
   },
+  creditedSubjectsButtonText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black",
+  },
   instructionText: {
     fontSize: 20,
     color: "white",
     textAlign: "center",
     marginVertical: 10,
+  },
+  scrollView: {
+    width: "80%",
+    maxHeight: height * 0.6,
+  },
+  levelHeader: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#77FF23",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  subjectRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "white",
+  },
+  subjectCode: {
+    fontSize: 18,
+    color: "white",
+    width: "25%",
+    textAlign: "left",
+  },
+  subjectTitle: {
+    fontSize: 18,
+    color: "white",
+    width: "50%",
+    textAlign: "center",
+  },
+  subjectUnits: {
+    fontSize: 18,
+    color: "white",
+    width: "25%",
+    textAlign: "right",
   },
   backButton: {
     position: "absolute",
