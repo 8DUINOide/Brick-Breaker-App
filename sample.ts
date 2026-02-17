@@ -11,22 +11,22 @@ import {
 
 const { width, height } = Dimensions.get("window");
 
-const move = (object: ShapeInterface, dt: number) => {
+const move = (object: ShapeInterface, dt: number, maxSpeed: number) => {
   "worklet";
   if (object.type === "Circle") {
     object.vx += object.ax * dt;
     object.vy += object.ay * dt;
-    if (object.vx > MAX_SPEED) {
-      object.vx = MAX_SPEED;
+    if (object.vx > maxSpeed) {
+      object.vx = maxSpeed;
     }
-    if (object.vx < -MAX_SPEED) {
-      object.vx = -MAX_SPEED;
+    if (object.vx < -maxSpeed) {
+      object.vx = -maxSpeed;
     }
-    if (object.vy > MAX_SPEED) {
-      object.vy = MAX_SPEED;
+    if (object.vy > maxSpeed) {
+      object.vy = maxSpeed;
     }
-    if (object.vy < -MAX_SPEED) {
-      object.vy = -MAX_SPEED;
+    if (object.vy < -maxSpeed) {
+      object.vy = -maxSpeed;
     }
     object.x.value += object.vx * dt;
     object.y.value += object.vy * dt;
@@ -176,8 +176,9 @@ export const animate = (
   currentLevel: number
 ) => {
   "worklet";
+  const levelSpeed = LEVELS[currentLevel]?.speed || MAX_SPEED;
   for (const o of objects) {
-    move(o, (0.15 / 16) * timeSincePreviousFrame);
+    move(o, (0.15 / 16) * timeSincePreviousFrame, levelSpeed);
   }
 
   for (const o of objects) {
