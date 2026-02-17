@@ -87,10 +87,9 @@ export const createBouncingExample = (circleObject: CircleInterface, maxSpeed: n
   circleObject.y.value = 450;
   circleObject.r = RADIUS;
 
-  // Scale acceleration based on speed (Base speed is ~40)
-  const speedMultiplier = maxSpeed / 40;
-  circleObject.ax = 0.5 * speedMultiplier;
-  circleObject.ay = 1 * speedMultiplier;
+  // Revert to original acceleration values
+  circleObject.ax = 0.5;
+  circleObject.ay = 1;
 
   circleObject.vx = 0;
   circleObject.vy = 0;
