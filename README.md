@@ -7,7 +7,7 @@
 ---
 
 ## 📥 Download & Install
-**[Download the Latest Android APK](https://expo.dev/accounts/8duinoide/projects/BrickBreakerApp/builds/ee43afb8-abdd-48f1-833c-6d7d705d60f9)**
+**[Download the Latest Android APK](https://expo.dev/accounts/8duinoide/projects/BrickBreakerApp/builds/592e0c58-e9ae-447d-b6ac-4b71d4062c86)**
 
 *Note: This is a preview build. You may need to allow installation from unknown sources.*
 
