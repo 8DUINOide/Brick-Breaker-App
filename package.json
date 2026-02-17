@@ -1,6 +1,7 @@
 {
   "name": "brickbreakerapp",
   "version": "1.0.0",
+  "description": "A Brick Breaker game themed around the Computer Engineering curriculum, built with React Native and Skia.",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
