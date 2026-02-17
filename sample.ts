@@ -81,13 +81,17 @@ export const resolveWallCollision = (object: ShapeInterface) => {
   }
 };
 
-export const createBouncingExample = (circleObject: CircleInterface) => {
+export const createBouncingExample = (circleObject: CircleInterface, maxSpeed: number) => {
   "worklet";
   circleObject.x.value = 100;
   circleObject.y.value = 450;
   circleObject.r = RADIUS;
-  circleObject.ax = 0.5;
-  circleObject.ay = 1;
+
+  // Scale acceleration based on speed (Base speed is ~40)
+  const speedMultiplier = maxSpeed / 40;
+  circleObject.ax = 0.5 * speedMultiplier;
+  circleObject.ay = 1 * speedMultiplier;
+
   circleObject.vx = 0;
   circleObject.vy = 0;
   circleObject.m = RADIUS * 10;
