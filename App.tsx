@@ -12,8 +12,9 @@ import {
   Path,
   Skia,
 } from "@shopify/react-native-skia";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Platform, StyleSheet, View, Text as RNText, TouchableOpacity, ScrollView } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Gesture,
   GestureDetector,
@@ -162,6 +163,46 @@ export default function App() {
   const brickCount = useSharedValue(0);
   const clock = useClock();
 
+  // Load progress on mount
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const savedLevel = await AsyncStorage.getItem('@brickbreaker:level');
+        const savedCompleted = await AsyncStorage.getItem('@brickbreaker:completed');
+        const savedUnits = await AsyncStorage.getItem('@brickbreaker:units');
+
+        if (savedLevel !== null) setCurrentLevel(parseInt(savedLevel));
+        if (savedCompleted !== null) setCompletedLevels(JSON.parse(savedCompleted));
+        if (savedUnits !== null) totalUnitsEarned.value = parseFloat(savedUnits);
+      } catch (e) {
+        console.error("Failed to load progress", e);
+      }
+    };
+    loadProgress();
+  }, []);
+
+  // Save progress function
+  const saveProgress = async (level: number, completed: number[], units: number) => {
+    try {
+      await AsyncStorage.setItem('@brickbreaker:level', level.toString());
+      await AsyncStorage.setItem('@brickbreaker:completed', JSON.stringify(completed));
+      await AsyncStorage.setItem('@brickbreaker:units', units.toString());
+    } catch (e) {
+      console.error("Failed to save progress", e);
+    }
+  };
+
+  // Clear progress function
+  const clearProgress = async () => {
+    try {
+      await AsyncStorage.removeItem('@brickbreaker:level');
+      await AsyncStorage.removeItem('@brickbreaker:completed');
+      await AsyncStorage.removeItem('@brickbreaker:units');
+    } catch (e) {
+      console.error("Failed to clear progress", e);
+    }
+  };
+
   const circleObject: CircleInterface = {
     type: "Circle",
     id: 0,
@@ -248,6 +289,7 @@ export default function App() {
       } else {
         unitsEarnedThisLevel.value = 0;
       }
+      saveProgress(currentLevel + 1, newCompletedLevels, totalUnitsEarned.value);
       setCurrentLevel(currentLevel + 1);
       unitsEarnedThisLevel.value = 0;
     } else if (advanceLevel && currentLevel === LEVELS.length - 1) {
@@ -260,6 +302,7 @@ export default function App() {
       } else {
         unitsEarnedThisLevel.value = 0;
       }
+      saveProgress(currentLevel, newCompletedLevels, totalUnitsEarned.value);
       setIsGameCompleted(true);
     } else {
       unitsEarnedThisLevel.value = 0;
@@ -556,6 +599,7 @@ export default function App() {
             totalUnitsEarned.value = 0;
             setCompletedLevels([]);
             unitsEarnedThisLevel.value = 0;
+            clearProgress();
             resetGame(false);
           }}
         >

@@ -7,7 +7,7 @@
 ---
 
 ## 📥 Download & Install
-**[Download the Latest Android APK](https://expo.dev/accounts/8duinoide/projects/BrickBreakerApp/builds/92f2df4a-b588-4998-a6d6-0f2800779e51)**
+**[Download the Latest Android APK](https://expo.dev/accounts/8duinoide/projects/BrickBreakerApp/builds/17908748-0d6c-4f8d-a9b7-fcd3ded22551)**
 
 *Note: This is a preview build. You may need to allow installation from unknown sources.*
 
@@ -54,4 +54,4 @@ If you want to run the project locally:
 ---
 
 ## 👨‍💻 Developer
-Developed by **[Your Name/8duinoide]** as a final requirement for Mobile App Development.
+Developed by **[Al Francis B. Paz/8duinoide]** as a final requirement for Mobile App Development.
