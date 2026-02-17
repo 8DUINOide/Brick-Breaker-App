@@ -1,58 +1,57 @@
+# Brick Breaker: Computer Engineering Edition
 
+> **A finals project for Mobile App Development at Ateneo de Naga University.**
 
-Brick Breaker: CpE Curriculum
+**Brick Breaker: CpE Edition** reimagines the classic arcade game as an educational journey through the Computer Engineering curriculum. Players break bricks representing actual courses (e.g., GMAT101, PROG101), unlock semesters, and earn academic units to eventually "graduate."
 
-A Brick Breaker game inspired by the Computer Engineering curriculum
+---
 
-This Brick Breaker game, developed for the Mobile App Development course at Ateneo de Naga University, transforms the classic arcade game into an educational journey. Players break bricks representing Computer Engineering courses, earn academic units, and progress through semesters to "graduate" with 211 units.
+## 📥 Download & Install
+**[Download the Latest Android APK](https://expo.dev/accounts/8duinoide/projects/BrickBreakerApp/builds/92f2df4a-b588-4998-a6d6-0f2800779e51)**
 
+*Note: This is a preview build. You may need to allow installation from unknown sources.*
 
+---
 
+## 🎮 Key Features
 
+*   **Curriculum-Based Progression**: 8 Levels representing 8 Semesters (1st Year to 4th Year).
+*   **Unlock Subjects**: Breaking bricks "credits" the subject, adding it to your permanent record.
+*   **Unit Tracking**: Earn academic units for every course you complete.
+*   **Interactive Physics**: Smooth, fast-paced gameplay powered by **React Native Skia**.
+*   **Progress Tracking**: View your "Credited Subjects" and total units earned.
+*   **Responsive Design**: Optimized for modern Android devices.
 
-Key Features
+## 🛠️ Tech Stack
+*   **Framework**: [React Native](https://reactnative.dev/) with [Expo SDK 54](https://expo.dev/)
+*   **Graphics**: [@shopify/react-native-skia](https://shopify.github.io/react-native-skia/) for high-performance 2D rendering.
+*   **Animations**: [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/)
+*   **Build Tool**: EAS (Expo Application Services)
 
+## 🚀 Running from Source
 
+If you want to run the project locally:
 
+1.  **Clone the repo**:
+    ```bash
+    git clone https://github.com/yourusername/Brick-Breaker-App.git
+    cd Brick-Breaker-App
+    ```
 
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-🎮 Curriculum-Based Gameplay: Break bricks labeled with course codes (e.g., CpE101) to progress through semesters (First Year to Fourth Year).
+3.  **Start the server**:
+    ```bash
+    npx expo start -c
+    ```
 
+4.  **Run on Device**:
+    Scan the QR code with the **Expo Go** app (Android) or Camera (iOS).
 
+---
 
-📚 Unit Tracking: Earn units per course, displayed on the game screen and Credited Subjects screen.
-
-
-
-🖼️ Interactive UI:
-
-
-
-
-
-Welcome Screen: Start or view progress.
-
-
-
-How to Play Screen: Gameplay guide.
-
-
-
-Play Menu: Select semesters.
-
-
-
-Credited Subjects Screen: View completed courses.
-
-
-
-Game Completed Screen: Celebrate 211 units.
-
-
-
-⭐ Visual Feedback: Stars and messages ("LEVEL UP" or "TRY AGAIN") for level outcomes.
-
-
-
-📱 Responsive Design: Adapts to various screen sizes.
-
+## 👨‍💻 Developer
+Developed by **[Your Name/8duinoide]** as a final requirement for Mobile App Development.
