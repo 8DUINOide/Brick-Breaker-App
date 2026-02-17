@@ -39,7 +39,7 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27, // Sum of units in this level
     cumulativeTotalUnits: 27, // Cumulative total up to this level
-    speed: 35, // Original Easy Speed
+    speed: 70, // Base Speed (Fast)
   },
   {
     year: "First Year",
@@ -60,7 +60,7 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 26,
     cumulativeTotalUnits: 53,
-    speed: 40, // Base Speed
+    speed: 75, // Speed Bump
   },
   {
     year: "Second Year",
@@ -81,7 +81,7 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 26.5,
     cumulativeTotalUnits: 79.5, // Adjusted cumulative total
-    speed: 60, // Hard/Fast
+    speed: 90, // Very Fast
   },
   {
     year: "Second Year",
@@ -102,7 +102,7 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 26.5, // Adjusted for additional courses
     cumulativeTotalUnits: 106, // Adjusted cumulative total
-    speed: 65, // Hardest (Max)
+    speed: 100, // Max Speed (Hardest)
   },
   {
     year: "Third Year",
@@ -123,7 +123,7 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27, // Adjusted for additional courses
     cumulativeTotalUnits: 133, // Adjusted cumulative total
-    speed: 50, // Fast but manageable
+    speed: 85, // Fast but manageable
   },
   {
     year: "Third Year",
@@ -144,7 +144,7 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27,
     cumulativeTotalUnits: 160,
-    speed: 55, // Faster
+    speed: 90, // Faster
   },
   {
     year: "Fourth Year",
@@ -186,6 +186,6 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27,
     cumulativeTotalUnits: 211,
-    speed: 45, // CruisingSpeed
+    speed: 80, // CruisingSpeed
   },
 ];
