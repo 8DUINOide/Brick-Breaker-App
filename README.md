@@ -1,5 +1,7 @@
 # Brick Breaker: Computer Engineering Edition
 
+<img src="./assets/icon.jpg" width="150" height="150" alt="App Icon" />
+
 > **A finals project for Mobile App Development at Ateneo de Naga University.**
 
 **Brick Breaker: CpE Edition** reimagines the classic arcade game as an educational journey through the Computer Engineering curriculum. Players break bricks representing actual courses (e.g., GMAT101, PROG101), unlock semesters, and earn academic units to eventually "graduate."
