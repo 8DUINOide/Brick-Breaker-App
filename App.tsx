@@ -25,7 +25,6 @@ import {
   useFrameCallback,
   useSharedValue,
   runOnJS,
-  runOnUI,
 } from "react-native-reanimated";
 import {
   BRICK_HEIGHT,
@@ -41,7 +40,6 @@ import {
   TOTAL_BRICKS,
   width,
   RADIUS,
-  MAX_SPEED,
 } from "./constants";
 import { animate, createBouncingExample } from "./sample";
 import { BrickInterface, CircleInterface, PaddleInterface } from "./types";
@@ -267,14 +265,20 @@ export default function App() {
     return LEVELS[level].cumulativeTotalUnits - LEVELS[level - 1].cumulativeTotalUnits;
   };
 
-
+  const resetGameWorklet = () => {
+    "worklet";
+    rectangleObject.x.value = PADDLE_MIDDLE;
+    createBouncingExample(circleObject);
+    bricks.forEach((brick) => {
+      brick.canCollide.value = true;
+    });
+    brickCount.value = 0;
+    unitsEarnedThisLevel.value = 0;
+  };
 
   const handleLevelTransition = useCallback((advanceLevel: boolean) => {
     if (isResetting) return;
     setIsResetting(true);
-
-    let nextLevel = currentLevel;
-
     if (advanceLevel && currentLevel < LEVELS.length - 1) {
       const newCompletedLevels = [...completedLevels, currentLevel];
       setCompletedLevels(newCompletedLevels);
@@ -287,7 +291,6 @@ export default function App() {
       }
       saveProgress(currentLevel + 1, newCompletedLevels, totalUnitsEarned.value);
       setCurrentLevel(currentLevel + 1);
-      nextLevel = currentLevel + 1; // Update for speed fetch
       unitsEarnedThisLevel.value = 0;
     } else if (advanceLevel && currentLevel === LEVELS.length - 1) {
       const newCompletedLevels = [...completedLevels, currentLevel];
@@ -301,35 +304,15 @@ export default function App() {
       }
       saveProgress(currentLevel, newCompletedLevels, totalUnitsEarned.value);
       setIsGameCompleted(true);
-      setIsResetting(false);
-      return; // Stop here if game completed
     } else {
       unitsEarnedThisLevel.value = 0;
     }
-
-    // Calculate speed for the NEXT level
-    const levelSpeed = LEVELS[nextLevel]?.speed || MAX_SPEED;
-
-    // Call resetGame with the correct speed
-    resetGame(advanceLevel, levelSpeed);
-
     setIsResetting(false);
   }, [currentLevel, isResetting, completedLevels]);
 
-  const resetGameWorklet = (advanceLevel: boolean, speed: number) => {
-    "worklet";
-    // Reset ball position and velocity with the passed speed
-    createBouncingExample(circleObject, speed);
-
-    // Reset paddle position
-    rectangleObject.x.value = PADDLE_MIDDLE;
-    bricks.forEach((brick) => {
-      brick.canCollide.value = true;
-    });
-  };
-
-  const resetGame = (advanceLevel = false, speed = MAX_SPEED) => {
-    runOnUI(resetGameWorklet)(advanceLevel, speed);
+  const resetGame = (advanceLevel: boolean) => {
+    resetGameWorklet();
+    runOnJS(handleLevelTransition)(advanceLevel);
   };
 
   const startLevel = (level: number) => {
@@ -337,15 +320,10 @@ export default function App() {
     setShowPlayMenu(false);
     setIsGameStarted(true);
     unitsEarnedThisLevel.value = 0;
-    const levelSpeed = LEVELS[level]?.speed || MAX_SPEED;
-    resetGame(false, levelSpeed);
+    resetGame(false);
   };
 
-  useEffect(() => {
-    // Get speed for current level (or level 0 on init)
-    const levelSpeed = LEVELS[currentLevel]?.speed || MAX_SPEED;
-    createBouncingExample(circleObject, levelSpeed);
-  }, [currentLevel]);
+  createBouncingExample(circleObject);
 
   useFrameCallback((frameInfo) => {
     const deltaTime = frameInfo.timeSincePreviousFrame
@@ -364,11 +342,9 @@ export default function App() {
   const gesture = Gesture.Pan()
     .onBegin(() => {
       if (brickCount.value === TOTAL_BRICKS) {
-        runOnJS(handleLevelTransition)(true);
+        runOnJS(resetGame)(true);
       } else if (brickCount.value === -1) {
-        // Game Over / Lost Ball
-        runOnJS(handleLevelTransition)(false);
-        brickCount.value = 0;
+        runOnJS(resetGame)(false);
       }
     })
     .onChange(({ x }) => {

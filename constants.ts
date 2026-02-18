@@ -23,6 +23,7 @@ export const LEVELS = [
   {
     year: "First Year",
     semester: "1st Semester",
+    speed: 75,
     courseCodes: [
       { code: "CIFP101", title: "Adnu Culture and Spirituality", units: 1.5 },
       { code: "CRCP001", title: "College SRA 1", units: 1.5 },
@@ -39,11 +40,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27, // Sum of units in this level
     cumulativeTotalUnits: 27, // Cumulative total up to this level
-    speed: 70, // Base Speed (Fast)
   },
   {
     year: "First Year",
     semester: "2nd Semester",
+    speed: 78,
     courseCodes: [
       { code: "CIFP102", title: "Adnu's Social Mission and Formation", units: 1.5 },
       { code: "CRCP002", title: "College SRA 2", units: 1.5 },
@@ -60,11 +61,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 26,
     cumulativeTotalUnits: 53,
-    speed: 75, // Speed Bump
   },
   {
     year: "Second Year",
     semester: "1st Semester",
+    speed: 95,
     courseCodes: [
       { code: "CRCP003", title: "College SRA 3", units: 1.5 },
       { code: "NSTP101", title: "National Service Training Program I - Cwts I", units: 3 },
@@ -81,11 +82,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 26.5,
     cumulativeTotalUnits: 79.5, // Adjusted cumulative total
-    speed: 90, // Very Fast
   },
   {
     year: "Second Year",
     semester: "2nd Semester",
+    speed: 100,
     courseCodes: [
       { code: "CRCP004", title: "College SRA 4", units: 1.5 },
       { code: "GEAL101", title: "Engineering Data Analysis", units: 3 },
@@ -102,11 +103,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 26.5, // Adjusted for additional courses
     cumulativeTotalUnits: 106, // Adjusted cumulative total
-    speed: 100, // Max Speed (Hardest)
   },
   {
     year: "Third Year",
     semester: "1st Semester",
+    speed: 88,
     courseCodes: [
       { code: "QCCP220", title: "Cad 2: Computer Engineering Drafting and Design", units: 1 },
       { code: "QCEE001", title: "Cpe Professional Elective 1", units: 4 },
@@ -123,11 +124,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27, // Adjusted for additional courses
     cumulativeTotalUnits: 133, // Adjusted cumulative total
-    speed: 85, // Fast but manageable
   },
   {
     year: "Third Year",
     semester: "2nd Semester",
+    speed: 92,
     courseCodes: [
       { code: "GEAL102", title: "Engineering Economics", units: 3 },
       { code: "GEAL103", title: "Engineering Management", units: 2 },
@@ -144,11 +145,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27,
     cumulativeTotalUnits: 160,
-    speed: 90, // Faster
   },
   {
     year: "Fourth Year",
     semester: "1st Semester",
+    speed: 82,
     courseCodes: [
       { code: "QCPP610", title: "Ojt/Industry Immersion for Cpe (240 Hours)", units: 2 },
       { code: "PFIT103", title: "Physical Activities Toward Health and Fitness 3 (Pathfit 3): Menu of Dance, Sports, Martial Arts, Group Exercise, Outdoor and Adventure Activities", units: 2, },
@@ -165,11 +166,11 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 24,
     cumulativeTotalUnits: 184,
-    speed: 40, // Easier
   },
   {
     year: "Fourth Year",
     semester: "2nd Semester",
+    speed: 85,
     courseCodes: [
       { code: "GECC020", title: "Ece/Cpe Laws and Professional Practice", units: 3 },
       { code: "PFIT104", title: "Physical Activities Toward Health and Fitness 4 (Pathfit 4): Menu of Dance, Sports, Group Exercise, Outdoor and Adventure Activities", units: 2, },
@@ -186,6 +187,5 @@ export const LEVELS = [
     ],
     totalUnitsThisLevel: 27,
     cumulativeTotalUnits: 211,
-    speed: 80, // CruisingSpeed
   },
 ];

@@ -59,6 +59,12 @@ export const resolveWallCollision = (object: ShapeInterface) => {
       circleObject.ax = -circleObject.ax;
     }
     else if (circleObject.y.value + circleObject.r > height) {
+      circleObject.x.value = 100;
+      circleObject.y.value = 450;
+      circleObject.ax = 0.5;
+      circleObject.ay = 1;
+      circleObject.vx = 0;
+      circleObject.vy = 0;
       return true;
     }
     else if (circleObject.x.value - circleObject.r < 0) {
@@ -75,21 +81,15 @@ export const resolveWallCollision = (object: ShapeInterface) => {
   }
 };
 
-export const createBouncingExample = (circleObject: CircleInterface, maxSpeed: number) => {
+export const createBouncingExample = (circleObject: CircleInterface) => {
   "worklet";
   circleObject.x.value = 100;
   circleObject.y.value = 450;
   circleObject.r = RADIUS;
-
-  // Dynamic Physics based on Speed (70-100 range)
-  // Give it a kick start so it doesn't rely solely on gravity
-  circleObject.vx = maxSpeed * 0.2; // Initial slight diagonal
-  circleObject.vy = maxSpeed * 0.3; // Initial downward movement
-
-  // Stronger gravity/acceleration for faster levels
-  circleObject.ax = maxSpeed * 0.05;
-  circleObject.ay = maxSpeed * 0.1;
-
+  circleObject.ax = 0.5;
+  circleObject.ay = 1;
+  circleObject.vx = 0;
+  circleObject.vy = 0;
   circleObject.m = RADIUS * 10;
 };
 
@@ -176,9 +176,9 @@ export const animate = (
   currentLevel: number
 ) => {
   "worklet";
-  const levelSpeed = LEVELS[currentLevel]?.speed || MAX_SPEED;
+  const maxSpeed = LEVELS[currentLevel]?.speed || MAX_SPEED;
   for (const o of objects) {
-    move(o, (0.15 / 16) * timeSincePreviousFrame, levelSpeed);
+    move(o, (0.15 / 16) * timeSincePreviousFrame, maxSpeed);
   }
 
   for (const o of objects) {
